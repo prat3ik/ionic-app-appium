@@ -30,15 +30,18 @@ public class TestCases {
     public AndroidDriver driver;
     public DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     private static final String APPIUM_SERVER_URL = "http://127.0.0.1:4723/wd/hub";
+    String filePath = new File("src/test/resources/justbaby.apk").getAbsolutePath();
     public WebDriverWait wait;
+    public ExecutionType executionType = ExecutionType.OTHER;
+
 
     @Test
     public void verifyUserCanDislikeThePerson() {
-        String takeATourButtonXPath = "//android.widget.Button[@text='Take a tour ']";
-        String showMeTextViewXPath = "//android.view.View[@text='Show me...']";
+        String takeATourButtonXPath = "//android.widget.Button[contains(@text,'Take a tour')]";
+        String showMeTextViewXPath = "//android.view.View[contains(@text='Show me...')]";
         String buttonClassName = "android.widget.Button";
-        String closeButtonXPath = "//android.widget.Image[@text=\"close \"]";
-        String dislikeButtonXPath = "//android.widget.Button[@text=\"Dislike\"]";
+        String closeButtonXPath = "//android.widget.Image[contains(@text,'close')]";
+        String dislikeButtonXPath = "//android.widget.Button[contains(@text,'Dislike')]";
         wait = new WebDriverWait(driver, 20);
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(takeATourButtonXPath)));
@@ -58,11 +61,11 @@ public class TestCases {
 
     @Test
     public void verifyUserCanSeeTheAppVersion() {
-        String takeATourButtonXPath = "//android.widget.Button[@text='Take a tour ']";
-        String showMeTextViewXPath = "//android.view.View[@text='Show me...']";
+        String takeATourButtonXPath = "//android.widget.Button[contains(@text,'Take a tour')]";
+        String showMeTextViewXPath = "//android.view.View[contains(@text,'Show me...')]";
         String buttonClassName = "android.widget.Button";
-        String settingsOptionXPath = "//android.widget.Button[@text=\"Settings \"]";
-        String aboutButtonXPath = "//android.view.View[@text=\"About\"]";
+        String settingsOptionXPath = "//android.widget.Button[contains(@text,'Settings')]";
+        String aboutButtonXPath = "//android.view.View[contains(@text,'About')]";
         String versionTextViewXPath = "//android.view.View[contains(@text, 'Version')]";
         wait = new WebDriverWait(driver, 20);
 
@@ -91,15 +94,15 @@ public class TestCases {
 
     @Test
     public void verifyUserCanSeeTheLikedPersons() throws InterruptedException {
-        String takeATourButtonXPath = "//android.widget.Button[@text='Take a tour ']";
-        String showMeTextViewXPath = "//android.view.View[@text='Show me...']";
+        String takeATourButtonXPath = "//android.widget.Button[contains(@text,'Take a tour')]";
+        String showMeTextViewXPath = "//android.view.View[contains(@text='Show me...')]";
         String buttonClassName = "android.widget.Button";
-        String likeButtonXPath = "//android.widget.Image[@text=\"iconAgreeThumb\"]";
-        String likeButtonXPathOnConfirmationDialog = "//android.widget.Button[@text='Like ']";
-        String iconContactsXPath = "//android.widget.Image[@text=\"iconContacts\"]";
-        String closeButtonXPath = "//android.widget.Button[@text='Close ']";
-        String likesIconXPath = "//android.widget.Image[@text=\"thumbs up\"]";
-        String iLikeButtonXPath = "//android.widget.ToggleButton[@text=\"I LIKE\"]";
+        String likeButtonXPath = "//android.widget.Image[contains(@text,'iconAgreeThumb')]";
+        String likeButtonXPathOnConfirmationDialog = "//android.widget.Button[contains(@text,'Like')]";
+        String iconContactsXPath = "//android.widget.Image[contains(@text,'iconContacts')]";
+        String closeButtonXPath = "//android.widget.Button[contains(@text,'Close')]";
+        String likesIconXPath = "//android.widget.Image[contains(@text,'thumbs up')]";
+        String iLikeButtonXPath = "//android.widget.ToggleButton[contains(@text,'I LIKE')]";
 
         System.out.println(driver.getPageSource());
         WebDriverWait wait = new WebDriverWait(driver, 40);
@@ -137,30 +140,31 @@ public class TestCases {
 
     @BeforeTest
     public void setUpPage() throws MalformedURLException {
-        String filePath = new File("src/test/resources/justbaby.apk").getAbsolutePath();
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UiAutomator2");
-//        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "c4e3f3cd");
-//        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID);
-//        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "8.0");
-//        desiredCapabilities.setCapability(MobileCapabilityType.APP, filePath);
-//        desiredCapabilities.setCapability(MobileCapabilityType.FULL_RESET, false);
-//        desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET, false);
         desiredCapabilities.setCapability(AndroidMobileCapabilityType.AUTO_GRANT_PERMISSIONS, true);
 
-//        // BROWSER STACK
-//        String userName = "siye1";
-//        String accessKey = "b6LstPhqLBqK15SddYDz";
-//        String appId = "b73b686dfe62bbe2013fa64bfff379d1181c18af";
-//
-//        desiredCapabilities.setCapability("device", "Google Pixel");
-//        desiredCapabilities.setCapability("os_version", "7.1");
-//        desiredCapabilities.setCapability("app", "bs://"+appId);
-//        desiredCapabilities.setCapability("browserstack.debug", true);
-//
-//
-//        driver = new AndroidDriver(new URL("https://"+userName+":"+accessKey+"@hub-cloud.browserstack.com/wd/hub"), desiredCapabilities);
+        if (executionType == ExecutionType.LOCAL) {
+            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "c4e3f3cd");
+            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, Platform.ANDROID);
+            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "8.0");
+            desiredCapabilities.setCapability(MobileCapabilityType.APP, filePath);
+            desiredCapabilities.setCapability(MobileCapabilityType.FULL_RESET, false);
+            desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET, false);
+            driver = new AndroidDriver(new URL(APPIUM_SERVER_URL), desiredCapabilities);
+        } else if (executionType == ExecutionType.AWS) {
+            driver = new AndroidDriver(new URL(APPIUM_SERVER_URL), desiredCapabilities);
+        } else if (executionType == ExecutionType.OTHER) {
+            System.out.println("Inside BS..");
+            String userName = "siye1";
+            String accessKey = "b6LstPhqLBqK15SddYDz";
+            String appId = "b73b686dfe62bbe2013fa64bfff379d1181c18af";
 
-        driver = new AndroidDriver(new URL(APPIUM_SERVER_URL), desiredCapabilities);
+            desiredCapabilities.setCapability("device", "Google Pixel");
+            desiredCapabilities.setCapability("os_version", "7.1");
+            desiredCapabilities.setCapability("app", "bs://" + appId);
+            desiredCapabilities.setCapability("browserstack.debug", true);
+            driver = new AndroidDriver(new URL("https://" + userName + ":" + accessKey + "@hub-cloud.browserstack.com/wd/hub"), desiredCapabilities);
+        }
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
@@ -178,6 +182,7 @@ public class TestCases {
 
     /**
      * This method used to take the screenshots of failures screen(Only visible at AWS Device Farm Screenshot tab)
+     *
      * @param name
      * @return
      */
