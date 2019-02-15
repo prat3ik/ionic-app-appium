@@ -32,13 +32,13 @@ public class TestCases {
     private static final String APPIUM_SERVER_URL = "http://127.0.0.1:4723/wd/hub";
     String filePath = new File("src/test/resources/justbaby.apk").getAbsolutePath();
     public WebDriverWait wait;
-    public ExecutionType executionType = ExecutionType.OTHER;
+    public ExecutionType executionType = ExecutionType.AWS;
 
 
     @Test
     public void verifyUserCanDislikeThePerson() {
         String takeATourButtonXPath = "//android.widget.Button[contains(@text,'Take a tour')]";
-        String showMeTextViewXPath = "//android.view.View[contains(@text='Show me...')]";
+        String showMeTextViewXPath = "//android.view.View[contains(@text,'Show me...')]";
         String buttonClassName = "android.widget.Button";
         String closeButtonXPath = "//android.widget.Image[contains(@text,'close')]";
         String dislikeButtonXPath = "//android.widget.Button[contains(@text,'Dislike')]";
@@ -95,7 +95,7 @@ public class TestCases {
     @Test
     public void verifyUserCanSeeTheLikedPersons() throws InterruptedException {
         String takeATourButtonXPath = "//android.widget.Button[contains(@text,'Take a tour')]";
-        String showMeTextViewXPath = "//android.view.View[contains(@text='Show me...')]";
+        String showMeTextViewXPath = "//android.view.View[contains(@text,'Show me...')]";
         String buttonClassName = "android.widget.Button";
         String likeButtonXPath = "//android.widget.Image[contains(@text,'iconAgreeThumb')]";
         String likeButtonXPathOnConfirmationDialog = "//android.widget.Button[contains(@text,'Like')]";
@@ -163,7 +163,10 @@ public class TestCases {
             desiredCapabilities.setCapability("os_version", "7.1");
             desiredCapabilities.setCapability("app", "bs://" + appId);
             desiredCapabilities.setCapability("browserstack.debug", true);
+            System.out.println("Caps set BS");
             driver = new AndroidDriver(new URL("https://" + userName + ":" + accessKey + "@hub-cloud.browserstack.com/wd/hub"), desiredCapabilities);
+            System.out.println(" BS driver created..");
+
         }
         driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
